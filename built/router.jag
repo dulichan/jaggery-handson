@@ -1,0 +1,19 @@
+<%
+var goose = require("/modules/goose.js").goose;
+var router = new goose({
+    CONTEXT: "/jsmeetup/api/"
+});
+var log = new Log();
+var database = new Database("jdbc:mysql://localhost:3306/test", "root", "");
+router.get("todos", function(ctx) {
+	var todos = database.query("SELECT * FROM todos");
+    print(todos);
+});
+router.post("todos", function(ctx){
+	database.query("INSERT INTO `todos` (`text`, `status`) VALUES (?, 0);", ctx.text);
+});
+router.put("todos", function(ctx){
+	var status = ctx.status?0:1;
+	database.query("UPDATE `todos` SET `status`=? WHERE `id`=?", status, ctx.id);
+});
+router.process(request); %>
